@@ -22,22 +22,22 @@ mod info_string {
     /// This part isn't strictly GFM-compliant (the standard doesn't
     /// mandate any interpretation of the info string).
     #[derive(serde::Serialize)]
-    pub struct Interpreted<'language, Parameters> {
-        pub language: &'language str,
+    pub struct Interpreted<Language, Parameters> {
+        pub language: Language,
         pub parameters: Parameters,
     }
 
     #[derive(serde::Serialize)]
-    pub struct Uninterpreted<'info_string> {
-        pub info_string: &'info_string str,
+    pub struct Uninterpreted<InfoString> {
+        pub info_string: InfoString,
     }
 }
 
 #[derive(serde::Serialize)]
-struct Block<'contents, InfoString> {
+struct Block<Contents, InfoString> {
     #[serde(flatten)]
     info_string: Option<InfoString>,
-    contents: &'contents str,
+    contents: Contents,
 }
 
 fn main() -> anyhow::Result<()> {
