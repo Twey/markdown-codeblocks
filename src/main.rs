@@ -50,7 +50,7 @@ fn main() -> anyhow::Result<()> {
         if let markdown::Block::CodeBlock(info_string, ref contents) = block {
             let output = if interpret_info_string {
                 serde_json::to_string(&Block {
-                    info_string: info_string.as_ref().and_then(|ref info_string| {
+                    info_string: info_string.as_ref().and_then(|info_string| {
                         let mut parts = info_string.split(',');
                         parts.next().map(|language| {
                             info_string::Interpreted {
@@ -59,11 +59,12 @@ fn main() -> anyhow::Result<()> {
                             }
                         })
                     }),
-                    contents: &contents,
+                    contents,
                 })
             } else {
                 serde_json::to_string(&Block {
-                    info_string: info_string.as_ref().map(|info_string| info_string::Uninterpreted { info_string }),
+                    info_string: info_string.as_ref()
+                        .map(|info_string| info_string::Uninterpreted { info_string }),
                     contents,
                 })
             }?;
