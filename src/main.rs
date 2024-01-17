@@ -7,10 +7,15 @@ use clap::Parser as _;
 struct Args {
     /// The path to a Markdown file.
     path: Option<std::path::PathBuf>,
+
     /// Interpret the info string as a comma-separated `language` and
     /// an array of `parameters` (not strictly GFM-compliant).
     #[arg(long)]
     interpret_info_string: bool,
+
+    /// Print command help as Markdown.
+    #[arg(long, hide = true)]
+    help_markdown: bool,
 }
 
 mod info_string {
@@ -36,7 +41,16 @@ struct Block<'contents, InfoString> {
 }
 
 fn main() -> anyhow::Result<()> {
-    let Args { path, interpret_info_string } = Args::parse();
+    let Args {
+        path,
+        interpret_info_string,
+        help_markdown,
+    } = Args::parse();
+
+    if help_markdown {
+        clap_markdown::print_help_markdown::<Args>();
+        return Ok(());
+    }
 
     let text = if let Some(path) = path {
         std::fs::read_to_string(path)?
